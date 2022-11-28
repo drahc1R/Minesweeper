@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.3)
-project(reversi CXX)
+project(minesweeper CXX)
 include(.cs211/cmake/CMakeLists.txt)
 
 # Defines a variable to stand for the .cxx files that implement
@@ -11,14 +11,14 @@ set(MODEL_SRC
         src/board.cxx
         src/model.cxx)
 
-# Adds a program named `reversi` built from the listed source
+# Adds a program named `minesweeper` built from the listed source
 # files and the common model files.
-add_program(reversi
+add_program(minesweeper
         src/minesweeper.cxx
         src/controller.cxx
         src/view.cxx
         ${MODEL_SRC})
-target_link_libraries(reversi ge211)
+target_link_libraries(minesweeper ge211) # this could cause a bug?
 
 # Adds a test program named `model_test` built from the listed
 # source file and the common model files.

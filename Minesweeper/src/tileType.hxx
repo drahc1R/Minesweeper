@@ -12,6 +12,7 @@ enum class Type
     bomb,
     safe,
     unknown,
+    seen,
     flag
 };
 

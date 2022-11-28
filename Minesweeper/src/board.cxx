@@ -53,12 +53,12 @@ Board::count_player(Type type) const
     switch (type)
     {
     case Type::bomb:
-        return bombs_.size();
+        return bombs.size();
     case Type::safe:
-        return seen_.size();
+        return seen.size();
     default:
         return dims_.width * dims_.height -
-               bombs_.size() - seen_.size();
+               bombs.size() - seen.size();
     }
 }
 
@@ -99,6 +99,8 @@ Board::all_positions() const
     return Rectangle::from_top_left(the_origin, dims_);
 }
 
+
+/// is it necessary?
 bool
 operator==(Board const& b1, Board const& b2)
 {
@@ -107,15 +109,17 @@ operator==(Board const& b1, Board const& b2)
            b1.dark_ == b2.dark_;
 }
 
-Player
+
+/// edited to return bomb, safe, and unknown for player board?
+Type
 Board::get_(Position pos) const
 {
-    if (dark_[pos]) {
-        return Player::dark;
-    } else if (light_[pos]) {
-        return Player::light;
+    if (bombs[pos]) {
+        return Type::bomb;
+    } else if (seen[pos]) {
+        return Type::safe;
     } else {
-        return Player::neither;
+        return Type::unknown;
     }
 }
 
@@ -231,4 +235,3 @@ Board::multi_reference::operator=(Player player) noexcept
     board_.set_all(pos_set_, player);
     return *this;
 }
-

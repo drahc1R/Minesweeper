@@ -34,9 +34,9 @@ public:
     // Defined and documented below.
     class reference;
 
-    Position_set bombs_;
+    Position_set bombs;
     /// should update seen every 'turn'?
-    Position_set seen_;
+    Position_set seen;
 
 private:
     //

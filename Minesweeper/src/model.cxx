@@ -223,7 +223,11 @@ Model::start_pos_() const
 
 /// Sets game over if selected position is a bomb tile
 void
-Model::set_game_over_();
+Model::set_game_over_()
+{
+    // If the player board contains a bomb tile. reveal all bombs and end game
+    return;
+}
 
 ///No need
 // /// Returns a position_set for all adjacent clear areas that dont have an
