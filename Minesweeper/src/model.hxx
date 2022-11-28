@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "player.hxx"
+#include "tileType.hxx"
 #include "board.hxx"
 
 #include <ge211.hxx>
@@ -59,15 +59,18 @@ public:
     bool is_game_over() const
     { return turn() == Player::neither; }
 
-    /// Returns the current turn, or `Player::neither` if the game is
-    /// over.
-    Player turn() const
-    { return turn_; }
 
-    /// Returns the winner, or `Player::neither` if there is no winner
-    /// (either because the game isn't over, or because it's a draw).
-    Player winner() const
-    { return winner_; }
+    /// No need
+    // /// Returns the current turn, or `Player::neither` if the game is
+    // /// over.
+    // Type turn() const
+    // { return turn_; }
+
+    /// NO need
+    // /// Returns the winner, or `Player::neither` if there is no winner
+    // /// (either because the game isn't over, or because it's a draw).
+    // Player winner() const
+    // { return winner_; }
 
     /// Returns the player at the given position, or `Player::neither` if
     /// the position is unoccupied.
@@ -76,7 +79,7 @@ public:
     ///
     ///  - Throws `ge211::Client_logic_error` if the position is out of
     ///    bounds.
-    Player operator[](Position) const;
+    Type operator[](Position) const;
 
     /// Returns a pointer to the move that will result if the current
     /// player plays at the given position. If the current player cannot
@@ -86,7 +89,7 @@ public:
     /// Note that the returned pointer must be borrowed from `next_moves_`,
     /// not a pointer to a local variable defined within this function.
     ///
-    const Move* find_move(Position) const;
+    // const Move* find_move(Position) const;
 
     /// Attempts to play a move at the given position for the current
     /// player. If successful, advances the state of the game to the
@@ -99,7 +102,7 @@ public:
     ///  - Throws `ge211::Client_logic_error` if the move is not currently
     ///    allowed for the current player.
     ///
-    void play_move(Position);
+    // void play_move(Position);
 
 #ifdef CS211_TESTING
     // When this class is compiled for testing, members of a struct named
@@ -151,43 +154,46 @@ private:
     /// Otherwise, it returns the empty set.
     ///
     /// (Helper for `evaluate_position_`.)
-    Position_set find_flips_(Position start, Dimensions dir) const;
+    // Position_set find_flips_(Position start, Dimensions dir) const;
 
-    /// Returns the set of positions that the current player would gain
-    /// by playing in the given position. If the current player cannot
-    /// play in the given position then the result is empty.
-    ///
-    /// (Helper for `compute_next_moves_`.)
-    Position_set evaluate_position_(Position) const;
+    /// REPLACEMENT FUNCTIONS
 
-    /// Updates `next_moves_` to contain the moves available the current
-    /// player.
-    ///
-    /// (Helper for `advance_turn_` and `Model(int, int)`.)
-    void compute_next_moves_();
+    /// Goes one step into direction 'dir' to check if there is a bomb.
+    /// Returns a position_set. Empty if no bomb present in that direction.
+    Position_set dir_bombs_(Position start, Dimensions dir) const;
 
-    /// Advances to the next turn by flipping `turn_` and updating
-    /// `next_moves_`. Checks for game over. Returns whether any moves
-    /// are now available (meaning game not over).
-    ///
-    /// (Helper for `really_play_move_`.)
-    bool advance_turn_();
+    /// Returns a unioned set of positions using find_bombs_ as a helper
+    /// function for checking in each direction. Returns a set of positions
+    /// that contains all nearby bombs for that one position. We can iterate
+    /// thru this set to count bombs
+    Position_set all_adjacent_bombs_(Position pos) const;
 
-    /// Sets the turn to neither and determines the winner, if any.
-    ///
-    /// (Helper for `really_play_move_`.)
+    /// Iterates thru each position in all_adjacent_bombs's returned position
+    /// set. Returns an integer. This integer will be used to mark each
+    /// position with adjacent bombs
+    int count_bombs_(Position pos) const;
+
+    // /// Returns a position_set for all adjacent clear areas that dont have an
+    // /// integer (for how many bombs are adjancent) associated with it
+    // Position_set first_reveal_(Position pos) const;
+
+    /// Returns position set for positions without any bombs adjacent to it.
+    /// useful for setting first move
+    Position_set no_bombs_() const;
+
+    /// Based on the difficulty level indicated, this function returns a
+    /// randomised position_set of bomb locations.
+    Position_set bomb_positions_() const;
+
+    /// iterate through the returned set to set Bombs[{Position}] = true;
+    void setup_bombs_() const;
+
+    /// get random game start position from no_bombs_ helper function
+    ge211::Posn<int> start_pos_() const;
+
+
+    /// Sets game over if selected position is a bomb tile
     void set_game_over_();
 
-    /// Assuming `move` has been validated, actually executes it by setting
-    /// the relevant board positions and then advancing the turn and checking
-    /// for the game to be over.
-    ///
-    /// (Helper for `play_move`.)
-    ///
-    /// ## Precondition (UNCHECKED)
-    ///
-    ///  - `move` is a valid move right now, meaning it is present in
-    ///    `next_moves_`
-    void really_play_move_(Move move);
 };
 

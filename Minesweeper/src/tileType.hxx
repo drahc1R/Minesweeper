@@ -7,15 +7,16 @@
 #include <iostream>
 
 // A player or lack thereof.
-enum class Player
+enum class Type
 {
-    dark,
-    light,
-    neither,
+    bomb,
+    safe,
+    unknown,
+    flag
 };
 
 // Returns the other player.
-Player other_player(Player);
+Type other_player(Type);
 
 // Prints a player in a manner suitable for debugging.
-std::ostream& operator<<(std::ostream&, Player);
+std::ostream& operator<<(std::ostream&, Type);

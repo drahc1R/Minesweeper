@@ -84,7 +84,7 @@ std::string
 View::initial_window_title() const
 {
     // You can change this if you want:
-    return "Reversi";
+    return "Minesweeper";
 }
 
 //takes a board position ({1,1} and converts this position to physical pixel

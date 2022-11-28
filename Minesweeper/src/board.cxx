@@ -33,7 +33,7 @@ Board::good_position(Position pos) const
            0 <= pos.y && pos.y < dims_.height;
 }
 
-Player
+Type
 Board::operator[](Position pos) const
 {
     bounds_check_(pos);
@@ -48,16 +48,17 @@ Board::operator[](Position pos)
 }
 
 size_t
-Board::count_player(Player player) const
+Board::count_player(Type type) const
 {
-    switch (player) {
-    case Player::light:
-        return light_.size();
-    case Player::dark:
-        return dark_.size();
+    switch (type)
+    {
+    case Type::bomb:
+        return bombs_.size();
+    case Type::safe:
+        return seen_.size();
     default:
         return dims_.width * dims_.height -
-               light_.size() - dark_.size();
+               bombs_.size() - seen_.size();
     }
 }
 

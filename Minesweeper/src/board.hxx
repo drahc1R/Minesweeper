@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "player.hxx"
+#include "tileType.hxx"
 #include "move.hxx"
 
 #include <ge211.hxx>
@@ -34,14 +34,21 @@ public:
     // Defined and documented below.
     class reference;
 
+    Position_set bombs_;
+    /// should update seen every 'turn'?
+    Position_set seen_;
+
 private:
     //
     // PRIVATE DATA MEMBERS
     //
 
     Dimensions dims_;
-    Position_set light_;
-    Position_set dark_;
+    // Position_set bombs_;
+    // /// should update seen every 'turn'?
+    // Position_set seen_;
+
+
     // INVARIANT: (light_ & dark_).empty()
 
 public:
@@ -69,8 +76,7 @@ public:
     /// ## Errors
     ///
     ///  - throws `ge211::Client_logic_error` if `!good_position(pos)`.
-    Player operator[](Position pos) const;
-
+    Type operator[](Position pos) const;
 
     //
     // PUBLIC CONSTRUCTOR & FUNCTION MEMBERS
@@ -102,10 +108,10 @@ public:
     ///
     ///  - behavior is undefined if any positions in the `Position_set`
     ///    are out of bounds.
-    void set_all(Position_set, Player);
+    void set_all(Position_set, Type);
 
     /// Counts the number of occurrences of the given player in the board.
-    size_t count_player(Player) const;
+    size_t count_player(Type) const;
 
     /// Returns a rectangle containing all the positions of the board. This
     /// can be used to iterate over the positions:
@@ -158,8 +164,8 @@ private:
     // PRIVATE HELPER FUNCTION MEMBERS
     //
 
-    Player get_(Position where) const;
-    void set_(Position where, Player who);
+    Type get_(Position where) const;
+    void set_(Position where, Type who);
     void bounds_check_(Position where) const;
 
 #ifdef CS211_TESTING
@@ -207,10 +213,10 @@ public:
     reference& operator=(reference const&) noexcept;
 
     /// Assigns to the object of the reference.
-    reference& operator=(Player) noexcept;
+    reference& operator=(Type) noexcept;
 
     /// Returns the value of the reference.
-    operator Player() const noexcept;
+    operator Type() const noexcept;
 
 private:
     friend class Board;
@@ -236,7 +242,7 @@ public:
     ///     Position_set positions{{0, 0}, {1, 1}, {2, 2}};
     ///     board.at_set(positions) = Player::dark;
     ///
-    multi_reference& operator=(Player) noexcept;
+    multi_reference& operator=(Type) noexcept;
 
 private:
     friend class Board;

@@ -5,7 +5,7 @@ include(.cs211/cmake/CMakeLists.txt)
 # Defines a variable to stand for the .cxx files that implement
 # the model.
 set(MODEL_SRC
-        src/player.cxx
+        src/tileType.cxx
         src/position_set.cxx
         src/move.cxx
         src/board.cxx
@@ -14,7 +14,7 @@ set(MODEL_SRC
 # Adds a program named `reversi` built from the listed source
 # files and the common model files.
 add_program(reversi
-        src/reversi.cxx
+        src/minesweeper.cxx
         src/controller.cxx
         src/view.cxx
         ${MODEL_SRC})

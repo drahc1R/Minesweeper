@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include <string>
 
+/// Definitions for setting board and difficulty level
 
 int
 main(int argc, char *argv[]) {
@@ -14,14 +15,27 @@ main(int argc, char *argv[]) {
         ///
         int width;
         int height;
+        int bombs;
         switch (argc) {
             case 1:
                 width = 8;
                 height = 8;
+                bombs = 10;
                 break;
             case 3:
-                width = std::stoi(argv[1]);
-                height = std::stoi(argv[2]);
+                /// If the user puts any other number. default to easy mode.
+                if (std::stoi(argv[1]) == 1)
+                {
+                    width = 24;
+                    height = 24;
+                    bombs = 99;
+                }
+                else
+                {
+                    width = 8;
+                    height = 8;
+                    bombs = 10;
+                }
                 break;
             default:
                 std::cerr << "Usage: " << argv[0] << " [WIDTH HEIGHT]\n";
