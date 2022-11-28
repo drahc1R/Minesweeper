@@ -48,20 +48,23 @@ Board::operator[](Position pos)
 }
 
 size_t
-Board::count_player(Type type) const
+Board::numTypes(Type type) const
 {
     switch (type)
     {
     case Type::bomb:
         return bombs.size();
-    case Type::safe:
+    case Type::seen:
         return seen.size();
+    case Type::flag:
+        return flags.size();
     default:
         return dims_.width * dims_.height -
                bombs.size() - seen.size();
     }
 }
 
+/// Not needed
 Board::Rectangle
 Board::center_positions() const
 {
@@ -100,66 +103,71 @@ Board::all_positions() const
 }
 
 
-/// is it necessary?
-bool
-operator==(Board const& b1, Board const& b2)
-{
-    return b1.dims_ == b2.dims_ &&
-           b1.light_ == b2.light_ &&
-           b1.dark_ == b2.dark_;
-}
+/// is it necessary? no.
+// bool
+// operator==(Board const& b1, Board const& b2)
+// {
+//     return b1.dims_ == b2.dims_ &&
+//            b1.light_ == b2.light_ &&
+//            b1.dark_ == b2.dark_;
+// }
 
 
-/// edited to return bomb, safe, and unknown for player board?
+/// edited to return bomb, safe for player board?
+/// Might have bug (might not need the else statement)
 Type
 Board::get_(Position pos) const
 {
     if (bombs[pos]) {
         return Type::bomb;
-    } else if (seen[pos]) {
+    } else if (safe[pos]) {
         return Type::safe;
     } else {
-        return Type::unknown;
+        return Type::flag;
     }
 }
 
 void
-Board::set_(Position pos, Player player)
+Board::set_(Position pos, Type type)
 {
-    switch (player) {
-    case Player::dark:
-        dark_[pos] = true;
-        light_[pos] = false;
-        break;
-
-    case Player::light:
-        dark_[pos] = false;
-        light_[pos] = true;
+    switch (type) {
+    case Type::bomb:
+        bombs[pos] = true;
+        safe[pos] = false;
         break;
 
     default:
-        dark_[pos] = false;
-        light_[pos] = false;
+        bombs[pos] = false;
+        safe[pos] = true;
     }
 }
 
+
+///Sets all positions to bombs or safe. defaults to everything safe
 void
-Board::set_all(Position_set pos_set, Player player)
+Board::set_all(Position_set pos_set, Type type)
 {
-    switch (player) {
-    case Player::light:
-        light_ |= pos_set;
-        dark_ &= ~pos_set;
+    switch (type) {
+    case Type::bomb:
+        bombs |= pos_set;
+        safe &= ~pos_set;
         break;
 
-    case Player::dark:
-        dark_ |= pos_set;
-        light_ &= ~pos_set;
+    case Type::safe:
+        safe |= pos_set;
+        bombs &= ~pos_set;
         break;
+
+    /// Unknown might not be necessary
+    case Type::unknown:
+        unknown |= pos_set;
+        safe &= ~pos_set;
+        bombs &= ~pos_set;
 
     default:
-        dark_ &= ~pos_set;
-        light_ &= ~pos_set;
+        unknown |= pos_set;
+        safe |= ~pos_set;
+        bombs &= ~pos_set;
     }
 }
 
@@ -200,18 +208,18 @@ Board::reference::reference(Board& board, Position pos) noexcept
 Board::reference&
 Board::reference::operator=(reference const& that) noexcept
 {
-    *this = Player(that);
+    *this = Type(that);
     return *this;
 }
 
 Board::reference&
-Board::reference::operator=(Player player) noexcept
+Board::reference::operator=(Type type) noexcept
 {
-    board_.set_(pos_, player);
+    board_.set_(pos_, type);
     return *this;
 }
 
-Board::reference::operator Player() const noexcept
+Board::reference::operator Type() const noexcept
 {
     return board_.get_(pos_);
 }
@@ -230,8 +238,8 @@ Board::multi_reference::multi_reference(
 { }
 
 Board::multi_reference&
-Board::multi_reference::operator=(Player player) noexcept
+Board::multi_reference::operator=(Type type) noexcept
 {
-    board_.set_all(pos_set_, player);
+    board_.set_all(pos_set_, type);
     return *this;
 }

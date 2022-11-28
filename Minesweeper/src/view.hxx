@@ -48,11 +48,11 @@ private:
     // TODO: Add any additional private members you need, such as helper
     // functions or sprites.
 
-    ge211::Rectangle_sprite tile_;
-    ge211::Rectangle_sprite gainTile_;
-    ge211::Circle_sprite lightPiece_;
-    ge211::Circle_sprite darkPiece_;
-    ge211::Circle_sprite loserSprite_;
+    ge211::Rectangle_sprite seen_;
+    ge211::Rectangle_sprite flag_;
+    ge211::Rectangle_sprite unknown_;
+    ge211::Circle_sprite bomb_;
+    ge211::Circle_sprite 
 
     // making function that returns the set of possible flips when mouse is
     // hovering over that location.
@@ -60,5 +60,5 @@ private:
     gains_(Position mousePos) const;
 
     void
-    add_player_sprite_(ge211::Sprite_set&, Player, Position, int z) const;
+    add_type_sprite_(ge211::Sprite_set&, Type, Position, int z) const;
 };

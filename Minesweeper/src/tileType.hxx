@@ -10,10 +10,10 @@
 enum class Type
 {
     bomb,
-    safe,
-    unknown,
     seen,
-    flag
+    flag,
+    safe,
+    unknown
 };
 
 // Returns the other player.

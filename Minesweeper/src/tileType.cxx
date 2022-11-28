@@ -24,7 +24,7 @@ operator<<(std::ostream& os, Type p)
     {
     case Type::bomb:
         return os << "B";
-    case Type::safe:
+    case Type::seen:
         return os << "S";
     case Type::unknown:
         return os << "U";

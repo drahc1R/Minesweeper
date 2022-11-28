@@ -12,11 +12,12 @@ static int const grid_size = 35;
 // from 0 to 255.
 
 //create colors for sprites
-static Color const tileColor = Color::medium_green();
-static Color const gainColor = Color::medium_red();
+
+static Color const flagColor = Color::medium_red();
 static Color const lightColor = Color::white();
 static Color const darkColor = Color::black();
-static Color const loserColor {100, 100, 100};
+static Color const gray {100, 100, 100};
+static Color const tileColor = gray;
 
 //make a size for each board unit.
 static ge211::Dims<int> bdim {33,33};
@@ -28,10 +29,9 @@ static ge211::Dims<int> bdim {33,33};
 View::View(Model const& model)
         : model_(model),
           tile_(bdim, tileColor),
-          gainTile_(bdim, gainColor),
+          flag_(bdim, flagColor),
           lightPiece_(15, lightColor),
           darkPiece_(15, darkColor),
-          loserSprite_(15, loserColor)
         // You may want to add sprite initialization here
 {
     // //initialize the sprite set here

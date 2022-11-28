@@ -37,6 +37,9 @@ public:
     Position_set bombs;
     /// should update seen every 'turn'?
     Position_set seen;
+    Position_set safe;
+    Position_set flags;
+    Position_set unknown;
 
 private:
     //
@@ -110,8 +113,8 @@ public:
     ///    are out of bounds.
     void set_all(Position_set, Type);
 
-    /// Counts the number of occurrences of the given player in the board.
-    size_t count_player(Type) const;
+    /// Returns the number of tiles of that type
+    size_t numTypes(Type) const;
 
     /// Returns a rectangle containing all the positions of the board. This
     /// can be used to iterate over the positions:
