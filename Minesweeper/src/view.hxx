@@ -49,10 +49,11 @@ private:
     // functions or sprites.
 
     ge211::Rectangle_sprite seen_;
-    ge211::Rectangle_sprite flag_;
     ge211::Rectangle_sprite unknown_;
+    ge211::Circle_sprite flag_;
     ge211::Circle_sprite bomb_;
-    ge211::Circle_sprite 
+    ge211::Font sans18{"sans.ttf", 18};
+    ge211::Text_sprite count;
 
     // making function that returns the set of possible flips when mouse is
     // hovering over that location.

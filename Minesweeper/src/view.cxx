@@ -15,9 +15,11 @@ static int const grid_size = 35;
 
 static Color const flagColor = Color::medium_red();
 static Color const lightColor = Color::white();
-static Color const darkColor = Color::black();
+static Color const bombColor = Color::black();
 static Color const gray {100, 100, 100};
-static Color const tileColor = gray;
+static Color const unknown {200, 200, 200};
+static Color const seenColor = gray;
+static Color const unknownColor = unknown;
 
 //make a size for each board unit.
 static ge211::Dims<int> bdim {33,33};
@@ -28,27 +30,22 @@ static ge211::Dims<int> bdim {33,33};
 //edited with new objects.
 View::View(Model const& model)
         : model_(model),
-          tile_(bdim, tileColor),
-          flag_(bdim, flagColor),
-          lightPiece_(15, lightColor),
-          darkPiece_(15, darkColor),
+          seen_(bdim, seenColor),
+          unknown_(bdim, unknownColor),
+          flag_(15, flagColor),
+          bomb_(15, bombColor),
+          sans18("sans.ttf", 18),
+          count()
         // You may want to add sprite initialization here
-{
-    // //initialize the sprite set here
-    // for (int i )
-}
+{}
 
-//called every 1/60th of a second
-//takes in the set to draw and mouse position
-//arms length collab with Evan Chen. We walked through the
-// general idea of how to go about drawing the board and what helper
-// functions we should probably use (AKA function to get the possible gains
-// when hovering over a tile.)
 void View::draw(Sprite_set& set, ge211::Posn<int> mouse_pos)
 {
-    // TODO, PROBABLY
-
-
+    // draw the board
+    // draw all unknowns as unknown sprites
+    // draw all seens as their actual (check for bomb and adjacent) sprites
+    // with seen sprite as basis
+    // draw all flags regardless of anything
 
     //get set of positions gained on pos where mouse is hovering over
     Position_set const& flips = gains_(screen_to_board(mouse_pos));
@@ -103,29 +100,30 @@ View::screen_to_board(View::Position pos) const
 }
 
 
-
+/// NO need
 //arms length collab with evan chen. High level discussion of how to check
 // whether a move is real or not and if there is a "gains" set that we can
 // return it
-Position_set const&
-View::gains_(View::Position mouse_pos) const
-{
-    static Position_set emptySet;
-    //returns the current flips that position being hovered will gain.
-    //get the move object where the player is hovering over
-    {
-        Move const *movep = model_.find_move(mouse_pos);
-        //if there's a move, then return all the possible moves, or else
-        // return empty position set
-        if (movep) {
-            return movep->second;
-        } else {
-            return emptySet;
-        }
-    }
-}
+// Position_set const&
+// View::gains_(View::Position mouse_pos) const
+// {
+//     static Position_set emptySet;
+//     //returns the current flips that position being hovered will gain.
+//     //get the move object where the player is hovering over
+//     {
+//         Move const *movep = model_.find_move(mouse_pos);
+//         //if there's a move, then return all the possible moves, or else
+//         // return empty position set
+//         if (movep) {
+//             return movep->second;
+//         } else {
+//             return emptySet;
+//         }
+//     }
+// }
 
-
+/// Need to edit this to setup bombs, set up adjacents and etc..?
+/// if not adjacents, then just check each tile every time.
 // Arms-length collaboration with Evan Chen on how to add each
 // sprite to the sprite set. (What to check for first and why, and why
 // checking "isgameover" late causes the bug of winning pieces disappearing.
