@@ -55,10 +55,9 @@ private:
     ge211::Font sans18{"sans.ttf", 18};
     ge211::Text_sprite count;
 
-    // making function that returns the set of possible flips when mouse is
-    // hovering over that location.
-    Position_set const&
-    gains_(Position mousePos) const;
+    ///functions
+
+    // function for working out
 
     void
     add_type_sprite_(ge211::Sprite_set&, Type, Position, int z) const;

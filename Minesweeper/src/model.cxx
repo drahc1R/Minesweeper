@@ -2,6 +2,8 @@
 
 using namespace ge211;
 
+using Position = ge211::Posn<int>;
+
 Model::Model(int size)
         : Model(size, size)
 { }
@@ -44,7 +46,7 @@ Model::dir_bombs_(Position start, Dimensions dir) const
         if (!board_.good_position(start) or
             board_[start] == Type::safe)
         {
-            return {};
+            return res;
         }
 
         // if that direction is still within bounds and there's a bomb. add to
@@ -55,6 +57,7 @@ Model::dir_bombs_(Position start, Dimensions dir) const
             res[start] = true;
             return res;
         }
+        return res;
 }
 
 /// Returns a union set of positions using dir_bombs_ as a helper
@@ -91,8 +94,8 @@ Model::all_adjacent_bombs_(Position pos) const
 /// Iterates through each position in all_adjacent_bombs's returned position
 /// set. Returns an integer. This integer will be used to mark each
 /// position with adjacent bombs
-// have to iterate thru this pset to make the adjacent tiles for const
-// solution board
+/// have to iterate thru this pset to make the adjacent tiles for const
+/// solution board
 int
 Model::count_bombs_(Position pos) const
 {
@@ -176,9 +179,9 @@ Model::setup_bombs_() const
 
     for (Position pos : bset)
     {
-        //set this as a public variable in board so that i could update bomb
+        // set this as a public variable in board so that i could update bomb
         // locations here...
-        board_.bombs[pos] = true;
+        seen[pos] = true;
     }
 }
 
@@ -214,7 +217,18 @@ Model::start_pos_() const
 /// for adjacent tiles, just need to add the number on top. that should be on
 /// view
 
+void
+Model::play_move(Position pos) const
+{
+    // add position to seen pset
+    seen[pos] = true;
+    unknown[pos] = false;
 
+    if (board_[pos] == Type::bomb)
+    {
+        died_ = true;
+    }
+}
 
 
 /// need to fix the board and tileType classes to fit our needs better.

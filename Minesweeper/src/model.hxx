@@ -54,10 +54,10 @@ public:
     /// This can be used to iterate over the positions.
     Rectangle board() const;
 
-    /// Returns whether the game is finished. This is true when neither
-    /// player can move.
-    bool is_game_over() const
-    { return turn() == Player::neither; }
+    // /// Returns whether the game is finished. This is true when neither
+    // /// player can move.
+    // bool is_game_over() const
+    // { return turn() == Player::neither; }
 
 
     /// No need
@@ -80,6 +80,14 @@ public:
     ///  - Throws `ge211::Client_logic_error` if the position is out of
     ///    bounds.
     Type operator[](Position) const;
+
+    /// Psets for each important sets
+    Position_set bombs;
+    /// should update seen every 'turn'?
+    Position_set seen;
+    Position_set safe;
+    Position_set flags;
+    Position_set unknown;
 
     /// Returns a pointer to the move that will result if the current
     /// player plays at the given position. If the current player cannot
@@ -116,8 +124,7 @@ private:
     // (Don't change these!)
     //
 
-    Player turn_   = Player::dark;
-    Player winner_ = Player::neither;
+    bool died_;
     Board board_;
 
     Move_map next_moves_;
@@ -191,6 +198,11 @@ private:
     /// get random game start position from no_bombs_ helper function
     ge211::Posn<int> start_pos_() const;
 
+    /// function should add the recently played move into the seen pset
+    /// and out of the unknown pset
+    /// should probably also check if the position has a bomb and end the
+    /// game by revealing all bombs
+    void play_move(Position pos) const;
 
     /// Sets game over if selected position is a bomb tile
     void set_game_over_();

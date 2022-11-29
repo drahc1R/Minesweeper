@@ -47,8 +47,6 @@ void View::draw(Sprite_set& set, ge211::Posn<int> mouse_pos)
     // with seen sprite as basis
     // draw all flags regardless of anything
 
-    //get set of positions gained on pos where mouse is hovering over
-    Position_set const& flips = gains_(screen_to_board(mouse_pos));
 
     //need to loop through every position in board to draw board
     for (Position bpos : model_.board()) {
@@ -128,14 +126,14 @@ View::screen_to_board(View::Position pos) const
 // sprite to the sprite set. (What to check for first and why, and why
 // checking "isgameover" late causes the bug of winning pieces disappearing.
 void
-View::add_player_sprite_(
+View::add_type_sprite_(
         Sprite_set& set,
-        Player player,
+        Type type,
         Position pos,
         int z) const
 {
     {
-        if (player == Player::neither)
+        if (type == Type::)
         {
             return;
         }
