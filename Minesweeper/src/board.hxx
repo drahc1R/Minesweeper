@@ -14,6 +14,8 @@
 #include <unordered_set>
 #include <vector>
 
+using namespace std;
+
 /// Represents the state of the board.
 class Board
 {
@@ -34,12 +36,7 @@ public:
     // Defined and documented below.
     class reference;
 
-    Position_set bombs;
-    /// should update seen every 'turn'?
-    Position_set seen;
-    Position_set safe;
-    Position_set flags;
-    Position_set unknown;
+
 
 private:
     //
@@ -47,9 +44,15 @@ private:
     //
 
     Dimensions dims_;
-    // Position_set bombs_;
     // /// should update seen every 'turn'?
-    // Position_set seen_;
+    Position_set bombs_;
+    // unordered_map<Position, bool> bombs_;
+    /// should update seen every 'turn'?
+
+    Position_set seen_;
+    Position_set safe_;
+    Position_set flags_;
+    Position_set unknown_;
 
 
     // INVARIANT: (light_ & dark_).empty()
@@ -58,6 +61,12 @@ public:
     //
     // PUBLIC CONSTRUCTOR & FUNCTION MEMBERS
     //
+
+    ///Function to add a position to one of board's position sets
+    void addPset(Position pos, std::string pset);
+
+    ///Function to remove a position from one of board's position sets
+    void removePset(Position pos, std::string pset) const;
 
     /// Constructs a board with the given dimensions.
     ///

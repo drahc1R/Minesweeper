@@ -94,8 +94,8 @@ Model::all_adjacent_bombs_(Position pos) const
 /// Iterates through each position in all_adjacent_bombs's returned position
 /// set. Returns an integer. This integer will be used to mark each
 /// position with adjacent bombs
-/// have to iterate thru this pset to make the adjacent tiles for const
-/// solution board
+//  have to iterate through this position set to make the adjacent tiles for
+/// the solution board
 int
 Model::count_bombs_(Position pos) const
 {
@@ -109,7 +109,7 @@ Model::count_bombs_(Position pos) const
 }
 
 /// Returns position set for positions without any bombs adjacent to it.
-// have to iterate thru this pset to make the const solution board
+// have to iterate through this position set to make the const solution board
 Position_set
 Model::no_bombs_() const
 {
@@ -181,7 +181,7 @@ Model::setup_bombs_() const
     {
         // set this as a public variable in board so that i could update bomb
         // locations here...
-        seen[pos] = true;
+        board_.addPset(pos, "bombs_");
     }
 }
 
@@ -222,7 +222,7 @@ Model::play_move(Position pos) const
 {
     // add position to seen pset
     seen[pos] = true;
-    unknown[pos] = false;
+    board_.addPset(unknown[pos])unknown[pos] = false;
 
     if (board_[pos] == Type::bomb)
     {

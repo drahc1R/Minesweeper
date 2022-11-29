@@ -26,6 +26,38 @@ Board::dimensions() const
     return dims_;
 }
 
+void
+Board::addPset(Position pos, std::string pset)
+{
+    if (pset == "bombs_")
+    {
+        bombs_[pos] = true;
+    }
+    else if (pset == "seen_")
+    {
+        seen_[pos] = true;
+    }
+    else if (pset == "safe_")
+    {
+        safe_[pos] = true;
+    }
+    else if (pset == "flags_")
+    {
+        flags_[pos] = true;
+    }
+    else if (pset == "unknown_")
+    {
+        unknown_[pos] = true;
+    }
+}
+
+void
+Board::removePset(Position pos, std::string pset) const
+{
+
+}
+
+
 bool
 Board::good_position(Position pos) const
 {
