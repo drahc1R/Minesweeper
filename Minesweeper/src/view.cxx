@@ -39,6 +39,9 @@ View::View(Model& model)
         // You may want to add sprite initialization here
 {}
 
+void View::
+
+
 void View::draw(Sprite_set& set, ge211::Posn<int> mouse_pos)
 {
     // draw the board
@@ -46,6 +49,8 @@ void View::draw(Sprite_set& set, ge211::Posn<int> mouse_pos)
     // draw all seens as their actual (check for bomb and adjacent) sprites
     // with seen sprite as basis
     // draw all flags regardless of anything
+
+
 
 
     //need to loop through every position in board to draw board

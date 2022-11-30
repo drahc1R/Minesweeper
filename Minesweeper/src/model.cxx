@@ -173,7 +173,6 @@ Model::bomb_positions_() const
     }
 }
 
-
 /// iterate through the returned set of bomb_positions to set
 // Bombs[{Position}] = true;
 void
@@ -186,10 +185,9 @@ Model::setup_bombs_()
     {
         // set this as a public variable in board so that i could update bomb
         // locations here...
-        board_.addPset(pos, board_.getPset("bombs_"));
+        board_.addPset(pos, "bombs_");
     }
 }
-
 
 /// gets a random position from tiles with no bombs
 /// returns this position to start game safely.
@@ -199,7 +197,7 @@ Model::start_pos_() const
     Position_set safe = no_bombs_();
     int totalSafePos = 0;
 
-    //creating a position var that will be returned if the random generator
+    // creating a position var that will be returned if the random generator
     // doesn't work
     Posn<int> first(0,0);
     for (Position p: safe) {
@@ -225,12 +223,10 @@ Model::start_pos_() const
 /// should start game with one of the positions in pset that no_bombs_ returns
 
 
-
 /// need two more functions to add to state of board: set up safe
 /// tiles psets
 /// for adjacent tiles, just need to add the number on top. that should be on
 /// view
-
 
 
 /// play the move by adding to seen and removing from unknown set. if its a
@@ -240,17 +236,19 @@ Model::start_pos_() const
 void
 Model::play_move(Position pos)
 {
-    // add position to seen pset
-    board_.addPset(pos, board_.getPset("seen_"));
+    // add position to position set of seen tiles
+    board_.addPset(pos, "seen_");
 
-    // remove position from unknown pset
-    board_.removePset(pos, board_.getPset("unknown"));
+    // remove position from position set of unknown tiles
+    board_.removePset(pos, "unknown");
 
     /// if bomb. set die to true. this should trigger end of game
     if (board_.isBomb(pos))
     {
         died_ = true;
+        set_game_over_();
     }
+    ///just in case there are no more unknown safe positions
     else if ((board_.numTypes(Type::unknown) - 10) == 0)
     {
         win_ = true;
@@ -258,14 +256,22 @@ Model::play_move(Position pos)
     else
     {
         /// add to seen
-        board_.addPset(pos, board_.getPset("seen_"));
+        board_.addPset(pos, "seen_");
 
         /// remove from unknown
-        board_.removePset(pos, board_.getPset("unknown_"));
+        board_.removePset(pos,"unknown_");
 
-        // count the number of bombs for 
-        count_bombs_(pos)
+        // count the number of bombs for the uncovered position
+        int numBombs = count_bombs_(pos);
 
+        // need to add this number to the adjacent position set
+        board_.addAdjacent(pos, numBombs);
+
+        //if playing this move causes unknown_ set to be empty
+        if ((board_.numTypes(Type::unknown) - 10) == 0)
+        {
+            win_ = true;
+        }
     }
 }
 
@@ -273,25 +279,13 @@ Model::play_move(Position pos)
 /// need to fix the board and tileType classes to fit our needs better.
 
 
-
-/// Sets game over if selected position is a bomb tile
+// Sets game over if selected position is a bomb tile
 void
 Model::set_game_over_()
 {
-    // If the player board contains a bomb tile. reveal all bombs and end game
-    return;
+    // when the player dies, display all the bombs
+    board_.addBombsToSeen();
 }
-
-///No need
-// /// Returns a position_set for all adjacent clear areas that dont have an
-// /// integer (for how many bombs are adjancent) associated with it
-// Position_set
-// Model::first_reveal_(Position) const
-// {
-//
-// }
-
-
 
 
 

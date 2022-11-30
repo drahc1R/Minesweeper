@@ -47,7 +47,7 @@ private:
     // /// should update seen every 'turn'?
     Position_set bombs_;
     /// should update seen every 'turn'?
-
+    unordered_map<Position, int> adjacent_;
     Position_set seen_;
     Position_set safe_;
     Position_set flags_;
@@ -62,10 +62,10 @@ public:
     //
 
     ///Function to add a position to one of board's position sets
-    void addPset(Position pos, Position_set pset);
+    void addPset(Position pos, std::string pset);
 
     ///Function to remove a position from one of board's position sets
-    void removePset(Position pos, Position_set pset);
+    void removePset(Position pos, std::string pset);
 
     ///Function to return pset. Will return an empty pset if there is no pset
     /// of that string
@@ -77,6 +77,9 @@ public:
     ///Function that returns bool if position is seen or unknown
     bool isSeen(Position pos) const;
 
+    void addAdjacent(Position pos, int i);
+
+    void addBombsToSeen();
 
     /// Constructs a board with the given dimensions.
     ///

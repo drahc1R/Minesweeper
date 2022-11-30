@@ -27,16 +27,53 @@ Board::dimensions() const
 }
 
 void
-Board::addPset(Position pos, Position_set pset)
+Board::addPset(Position pos, std::string pset)
 {
-    pset[pos] = true;
+    if (pset == "bombs_")
+    {
+        bombs_[pos] = true;
+    }
+    else if (pset == "seen_")
+    {
+        seen_[pos] = true;
+    }
+    else if (pset == "safe_")
+    {
+        safe_[pos] = true;
+    }
+    else if (pset == "flags_")
+    {
+        flags_[pos] = true;
+    }
+    else if (pset == "unknown_")
+    {
+        unknown_[pos] = true;
+    }
 }
 
 void
-Board::removePset(Position pos, Position_set pset)
+Board::removePset(Position pos, std::string pset)
 {
-    pset[pos] = false;
-
+    if (pset == "bombs_")
+    {
+        bombs_[pos] = false;
+    }
+    else if (pset == "seen_")
+    {
+        seen_[pos] = false;
+    }
+    else if (pset == "safe_")
+    {
+        safe_[pos] = false;
+    }
+    else if (pset == "flags_")
+    {
+        flags_[pos] = false;
+    }
+    else if (pset == "unknown_")
+    {
+        unknown_[pos] = false;
+    }
 }
 
 Position_set
@@ -89,6 +126,21 @@ Board::isSeen(Position pos) const
     {
         return false;
     }
+}
+
+void
+Board::addBombsToSeen()
+{
+    for (Position b : bombs_)
+    {
+        seen_[b] = true;
+    }
+}
+
+void
+Board::addAdjacent(Position pos, int i)
+{
+    adjacent_[pos] = i;
 }
 
 bool
