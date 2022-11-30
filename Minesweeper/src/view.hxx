@@ -17,7 +17,7 @@ public:
     using Rectangle = ge211::Rect<int>;
 
     /// Constructs a view that knows about the given model.
-    explicit View(Model const&);
+    explicit View(Model&);
 
     // TODO: your code here
     // You will probably want to add arguments here so that the
@@ -43,7 +43,7 @@ public:
     // TODO: Add any public member functions you need.
 
 private:
-    Model const& model_;
+    Model& model_;
 
     // TODO: Add any additional private members you need, such as helper
     // functions or sprites.

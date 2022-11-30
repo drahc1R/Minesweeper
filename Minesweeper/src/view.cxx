@@ -28,7 +28,7 @@ static ge211::Dims<int> bdim {33,33};
 // replace 'eaten' pieces
 
 //edited with new objects.
-View::View(Model const& model)
+View::View(Model& model)
         : model_(model),
           seen_(bdim, seenColor),
           unknown_(bdim, unknownColor),

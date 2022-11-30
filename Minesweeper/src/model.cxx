@@ -6,7 +6,12 @@ using Position = ge211::Posn<int>;
 
 Model::Model(int size)
         : Model(size, size)
-{ }
+{
+    /// Play start move
+    win_ = false;
+    died_ = false;
+    play_move(start_pos_());
+}
 
 // Model::Model(int width, int height)
 //         : board_({width, height})
@@ -195,7 +200,7 @@ Model::start_pos_() const
     int totalSafePos = 0;
 
     //creating a position var that will be returned if the random generator
-    // doesnt work
+    // doesn't work
     Posn<int> first(0,0);
     for (Position p: safe) {
         totalSafePos++;
@@ -219,14 +224,18 @@ Model::start_pos_() const
 
 /// should start game with one of the positions in pset that no_bombs_ returns
 
+
+
 /// need two more functions to add to state of board: set up safe
 /// tiles psets
 /// for adjacent tiles, just need to add the number on top. that should be on
 /// view
 
+
+
 /// play the move by adding to seen and removing from unknown set. if its a
 /// bomb, die and end game. when uncovering the next move. check how many
-/// bombs are nearby.
+/// bombs are nearby for that position.
 /// need to store this number to display it on that position somehow
 void
 Model::play_move(Position pos)
@@ -242,24 +251,20 @@ Model::play_move(Position pos)
     {
         died_ = true;
     }
+    else if ((board_.numTypes(Type::unknown) - 10) == 0)
+    {
+        win_ = true;
+    }
     else
     {
-        /// can be 2 options
-        /// you win meaning unknown.size == 0
-        /// midgame
-
-        ///Need to make a way to show that player won
-        if (board_.numTypes(Type::unknown) == 0)
-        {
-            //win_ = true;
-        }
-
         /// add to seen
         board_.addPset(pos, board_.getPset("seen_"));
+
         /// remove from unknown
-        board_.removePset(pos, board_.getPset("unknown_"))
+        board_.removePset(pos, board_.getPset("unknown_"));
 
-
+        // count the number of bombs for 
+        count_bombs_(pos)
 
     }
 }

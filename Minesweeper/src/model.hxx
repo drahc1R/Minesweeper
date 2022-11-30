@@ -25,6 +25,7 @@ public:
     /*** DON'T CHANGE ANYTHING IN THE PUBLIC SECTION ***/
     /***************************************************/
 
+
     /// Model dimensions will use `int` coordinates, as board dimensions do.
     using Dimensions = Board::Dimensions;
 
@@ -59,6 +60,11 @@ public:
     // bool is_game_over() const
     // { return turn() == Player::neither; }
 
+    /// function should add the recently played move into the seen pset
+    /// and out of the unknown pset
+    /// should probably also check if the position has a bomb and end the
+    /// game by revealing all bombs
+    void play_move(Position pos);
 
     /// No need
     // /// Returns the current turn, or `Player::neither` if the game is
@@ -81,13 +87,6 @@ public:
     ///    bounds.
     Type operator[](Position) const;
 
-    /// Psets for each important sets
-    Position_set bombs;
-    /// should update seen every 'turn'?
-    Position_set seen;
-    Position_set safe;
-    Position_set flags;
-    Position_set unknown;
 
     /// Returns a pointer to the move that will result if the current
     /// player plays at the given position. If the current player cannot
@@ -123,7 +122,7 @@ private:
     // PRIVATE MEMBER VARIABLES
     // (Don't change these!)
     //
-
+    bool win_;
     bool died_;
     Board board_;
 
@@ -198,11 +197,7 @@ private:
     /// get random game start position from no_bombs_ helper function
     Position start_pos_() const;
 
-    /// function should add the recently played move into the seen pset
-    /// and out of the unknown pset
-    /// should probably also check if the position has a bomb and end the
-    /// game by revealing all bombs
-    void play_move(Position pos);
+
 
     /// Sets game over if selected position is a bomb tile
     void set_game_over_();
