@@ -46,7 +46,6 @@ private:
     Dimensions dims_;
     // /// should update seen every 'turn'?
     Position_set bombs_;
-    // unordered_map<Position, bool> bombs_;
     /// should update seen every 'turn'?
 
     Position_set seen_;
@@ -63,10 +62,21 @@ public:
     //
 
     ///Function to add a position to one of board's position sets
-    void addPset(Position pos, std::string pset);
+    void addPset(Position pos, Position_set pset);
 
     ///Function to remove a position from one of board's position sets
-    void removePset(Position pos, std::string pset) const;
+    void removePset(Position pos, Position_set pset);
+
+    ///Function to return pset. Will return an empty pset if there is no pset
+    /// of that string
+    Position_set getPset(std::string set);
+
+    ///Function that returns bool if bomb present in that position
+    bool isBomb(Position pos) const;
+
+    ///Function that returns bool if position is seen or unknown
+    bool isSeen(Position pos) const;
+
 
     /// Constructs a board with the given dimensions.
     ///
@@ -142,7 +152,7 @@ public:
     /// Returns a rectangle containing the four center positions which
     /// much be occupied for play to move beyond them. This can be used
     /// to iterate over those positions.
-    Rectangle center_positions() const;
+    // Rectangle center_positions() const;
 
     /// Returns a reference to a `std::vector` containing all eight "unit
     /// direction vectors". In Python notation, these are:
@@ -156,7 +166,7 @@ public:
     static std::vector<Dimensions> const& all_directions();
 
     /// Equality for boards.
-    friend bool operator==(Board const&, Board const&);
+    friend bool operator==(Board, Board);
 
     /// Defined and documented below.
     class multi_reference;

@@ -27,36 +27,69 @@ Board::dimensions() const
 }
 
 void
-Board::addPset(Position pos, std::string pset)
+Board::addPset(Position pos, Position_set pset)
 {
-    if (pset == "bombs_")
-    {
-        bombs_[pos] = true;
-    }
-    else if (pset == "seen_")
-    {
-        seen_[pos] = true;
-    }
-    else if (pset == "safe_")
-    {
-        safe_[pos] = true;
-    }
-    else if (pset == "flags_")
-    {
-        flags_[pos] = true;
-    }
-    else if (pset == "unknown_")
-    {
-        unknown_[pos] = true;
-    }
+    pset[pos] = true;
 }
 
 void
-Board::removePset(Position pos, std::string pset) const
+Board::removePset(Position pos, Position_set pset)
 {
+    pset[pos] = false;
 
 }
 
+Position_set
+Board::getPset(std::string set)
+{
+    if (set == "bombs_")
+    {
+        return bombs_;
+    }
+    else if (set == "seen_")
+    {
+        return seen_;
+    }
+    else if (set == "safe_")
+    {
+        return flags_;
+    }
+    else if (set == "unknown_")
+    {
+        return unknown_;
+    }
+    else
+    {
+        Position_set s;
+        return s;
+    }
+}
+
+bool
+Board::isBomb(Position pos) const
+{
+    if (bombs_[pos])
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+bool
+Board::isSeen(Position pos) const
+{
+    if (seen_[pos])
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
 
 bool
 Board::good_position(Position pos) const
@@ -85,25 +118,27 @@ Board::numTypes(Type type) const
     switch (type)
     {
     case Type::bomb:
-        return bombs.size();
+        return bombs_.size();
     case Type::seen:
-        return seen.size();
+        return seen_.size();
     case Type::flag:
-        return flags.size();
+        return flags_.size();
+    case Type::unknown:
+        return unknown_.size();
     default:
         return dims_.width * dims_.height -
-               bombs.size() - seen.size();
+               bombs_.size() - seen_.size();
     }
 }
 
-/// Not needed
-Board::Rectangle
-Board::center_positions() const
-{
-    return Rectangle::from_top_left({dims_.width / 2 - 1,
-                                     dims_.height / 2 - 1},
-                                    {2, 2});
-}
+// /// Not needed
+// Board::Rectangle
+// Board::center_positions() const
+// {
+//     return Rectangle::from_top_left({dims_.width / 2 - 1,
+//                                      dims_.height / 2 - 1},
+//                                     {2, 2});
+// }
 
 static std::vector<Board::Dimensions>
 build_directions()
@@ -136,26 +171,30 @@ Board::all_positions() const
 
 
 /// is it necessary? no.
-// bool
-// operator==(Board const& b1, Board const& b2)
-// {
-//     return b1.dims_ == b2.dims_ &&
-//            b1.light_ == b2.light_ &&
-//            b1.dark_ == b2.dark_;
-// }
+bool
+operator==(Board b1, Board b2)
+{
+    return b1.dims_ == b2.dims_ &&
+           b1.bombs_ == b2.bombs_ &&
+           b1.safe_ == b2.safe_ &&
+           b1.flags_ == b2.flags_ &&
+           b1.unknown_ == b2.unknown_;
+}
 
 
 /// edited to return bomb, safe for player board?
+/// should this return seen and unknown?
 /// Might have bug (might not need the else statement)
 Type
 Board::get_(Position pos) const
 {
-    if (bombs[pos]) {
+    if (bombs_[pos]) {
         return Type::bomb;
-    } else if (safe[pos]) {
+    } else if (safe_[pos]) {
         return Type::safe;
-    } else {
-        return Type::flag;
+    } else
+    {
+        return Type::safe;
     }
 }
 
@@ -164,13 +203,13 @@ Board::set_(Position pos, Type type)
 {
     switch (type) {
     case Type::bomb:
-        bombs[pos] = true;
-        safe[pos] = false;
+        bombs_[pos] = true;
+        safe_[pos] = false;
         break;
 
     default:
-        bombs[pos] = false;
-        safe[pos] = true;
+        bombs_[pos] = false;
+        safe_[pos] = true;
     }
 }
 
@@ -181,25 +220,25 @@ Board::set_all(Position_set pos_set, Type type)
 {
     switch (type) {
     case Type::bomb:
-        bombs |= pos_set;
-        safe &= ~pos_set;
+        bombs_ |= pos_set;
+        safe_ &= ~pos_set;
         break;
 
     case Type::safe:
-        safe |= pos_set;
-        bombs &= ~pos_set;
+        safe_ |= pos_set;
+        bombs_ &= ~pos_set;
         break;
 
     /// Unknown might not be necessary
     case Type::unknown:
-        unknown |= pos_set;
-        safe &= ~pos_set;
-        bombs &= ~pos_set;
+        unknown_ |= pos_set;
+        safe_ &= ~pos_set;
+        bombs_ &= ~pos_set;
 
     default:
-        unknown |= pos_set;
-        safe |= ~pos_set;
-        bombs &= ~pos_set;
+        unknown_ |= pos_set;
+        safe_ |= ~pos_set;
+        bombs_ &= ~pos_set;
     }
 }
 
@@ -212,7 +251,7 @@ Board::bounds_check_(Position pos) const
 }
 
 bool
-operator!=(Board const& b1, Board const& b2)
+operator!=(Board b1, Board b2)
 {
     return !(b1 == b2);
 }

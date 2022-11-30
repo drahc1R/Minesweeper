@@ -18,7 +18,7 @@ Model::Model(int size)
 // }
 
 Model::Rectangle
-Model::board() const
+Model::board() //const
 {
     return board_.all_positions();
 }
@@ -172,7 +172,7 @@ Model::bomb_positions_() const
 /// iterate through the returned set of bomb_positions to set
 // Bombs[{Position}] = true;
 void
-Model::setup_bombs_() const
+Model::setup_bombs_()
 {
     // generate bomb positions
     Position_set bset = bomb_positions_();
@@ -181,20 +181,26 @@ Model::setup_bombs_() const
     {
         // set this as a public variable in board so that i could update bomb
         // locations here...
-        board_.addPset(pos, "bombs_");
+        board_.addPset(pos, board_.getPset("bombs_"));
     }
 }
 
 
 /// gets a random position from tiles with no bombs
 /// returns this position to start game safely.
-Posn<int>
+Position
 Model::start_pos_() const
 {
     Position_set safe = no_bombs_();
     int totalSafePos = 0;
+
+    //creating a position var that will be returned if the random generator
+    // doesnt work
+    Posn<int> first(0,0);
     for (Position p: safe) {
         totalSafePos++;
+        // this needs to be returned
+        first = p;
     }
     Random_source<int> cord(0, totalSafePos);
 
@@ -208,6 +214,7 @@ Model::start_pos_() const
             return p;
         }
     }
+    return first;
 }
 
 /// should start game with one of the positions in pset that no_bombs_ returns
@@ -217,16 +224,43 @@ Model::start_pos_() const
 /// for adjacent tiles, just need to add the number on top. that should be on
 /// view
 
+/// play the move by adding to seen and removing from unknown set. if its a
+/// bomb, die and end game. when uncovering the next move. check how many
+/// bombs are nearby.
+/// need to store this number to display it on that position somehow
 void
-Model::play_move(Position pos) const
+Model::play_move(Position pos)
 {
     // add position to seen pset
-    seen[pos] = true;
-    board_.addPset(unknown[pos])unknown[pos] = false;
+    board_.addPset(pos, board_.getPset("seen_"));
 
-    if (board_[pos] == Type::bomb)
+    // remove position from unknown pset
+    board_.removePset(pos, board_.getPset("unknown"));
+
+    /// if bomb. set die to true. this should trigger end of game
+    if (board_.isBomb(pos))
     {
         died_ = true;
+    }
+    else
+    {
+        /// can be 2 options
+        /// you win meaning unknown.size == 0
+        /// midgame
+
+        ///Need to make a way to show that player won
+        if (board_.numTypes(Type::unknown) == 0)
+        {
+            //win_ = true;
+        }
+
+        /// add to seen
+        board_.addPset(pos, board_.getPset("seen_"));
+        /// remove from unknown
+        board_.removePset(pos, board_.getPset("unknown_"))
+
+
+
     }
 }
 

@@ -52,7 +52,7 @@ public:
 
     /// Returns a rectangle containing all the positions of the board.
     /// This can be used to iterate over the positions.
-    Rectangle board() const;
+    Rectangle board();
 
     // /// Returns whether the game is finished. This is true when neither
     // /// player can move.
@@ -193,16 +193,16 @@ private:
     Position_set bomb_positions_() const;
 
     /// iterate through the returned set to set Bombs[{Position}] = true;
-    void setup_bombs_() const;
+    void setup_bombs_();
 
     /// get random game start position from no_bombs_ helper function
-    ge211::Posn<int> start_pos_() const;
+    Position start_pos_() const;
 
     /// function should add the recently played move into the seen pset
     /// and out of the unknown pset
     /// should probably also check if the position has a bomb and end the
     /// game by revealing all bombs
-    void play_move(Position pos) const;
+    void play_move(Position pos);
 
     /// Sets game over if selected position is a bomb tile
     void set_game_over_();
