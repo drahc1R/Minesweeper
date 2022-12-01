@@ -14,7 +14,6 @@ static int const grid_size = 35;
 //create colors for sprites
 
 static Color const flagColor = Color::medium_red();
-static Color const lightColor = Color::white();
 static Color const bombColor = Color::black();
 static Color const gray {100, 100, 100};
 static Color const unknown {200, 200, 200};
@@ -39,9 +38,6 @@ View::View(Model& model)
         // You may want to add sprite initialization here
 {}
 
-void View::
-
-
 void View::draw(Sprite_set& set, ge211::Posn<int> mouse_pos)
 {
     // draw the board
@@ -49,8 +45,6 @@ void View::draw(Sprite_set& set, ge211::Posn<int> mouse_pos)
     // draw all seens as their actual (check for bomb and adjacent) sprites
     // with seen sprite as basis
     // draw all flags regardless of anything
-
-
 
 
     //need to loop through every position in board to draw board
@@ -63,7 +57,7 @@ void View::draw(Sprite_set& set, ge211::Posn<int> mouse_pos)
         // and down to center
         Position piecePos = tilePos + Dimensions {1,2};//Dimensions
 
-        if (flips[bpos]) {
+        if (model_.board_.getPset["seen_"]) {
             set.add_sprite(gainTile_, tilePos, 0);
         } else {
             set.add_sprite(tile_, tilePos, 0);

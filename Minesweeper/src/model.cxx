@@ -6,21 +6,21 @@ using Position = ge211::Posn<int>;
 
 Model::Model(int size)
         : Model(size, size)
+
 {
+}
+
+Model::Model(int width, int height)
+        : board_({width, height})
+{
+    // TODO: initialize `next_moves_` to `turn_`'s available moves
+    // sets next_moves_ keys to all available positions and gains as their
+    // values
     /// Play start move
     win_ = false;
     died_ = false;
     play_move(start_pos_());
 }
-
-// Model::Model(int width, int height)
-//         : board_({width, height})
-// {
-//     // TODO: initialize `next_moves_` to `turn_`'s available moves
-//     // sets next_moves_ keys to all available positions and gains as their
-//     // values
-//     compute_next_moves_();
-// }
 
 Model::Rectangle
 Model::board() //const

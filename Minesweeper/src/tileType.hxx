@@ -13,7 +13,8 @@ enum class Type
     seen,
     flag,
     safe,
-    unknown
+    unknown,
+    bug
 };
 
 // Returns the other player.

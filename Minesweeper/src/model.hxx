@@ -35,6 +35,8 @@ public:
     /// Model rectangles will use `int` coordinates, as board rectangles do.
     using Rectangle = Board::Rectangle;
 
+    // /// made board public
+    // Board board_;
     /// Constructs a model with `size` as both its width and height.
     ///
     /// ## Errors

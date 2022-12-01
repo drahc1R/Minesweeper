@@ -246,7 +246,7 @@ Board::get_(Position pos) const
         return Type::safe;
     } else
     {
-        return Type::safe;
+        return Type::bug;
     }
 }
 
