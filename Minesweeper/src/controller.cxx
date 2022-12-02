@@ -41,26 +41,28 @@ Controller::on_mouse_down(ge211::Mouse_button button, View::Position spos)
         and button == ge211::Mouse_button::left)
         // and (view_.model_.returnBoard().getPset("unknown_")[boardpos]))
     {
-        std::cout << "check";
+
         model_.play_move(boardpos);
     }
 
     // if user right clicks and player not died, check if there is a flag in
     // that position
-    if (!model_.died_ and button == ge211::Mouse_button::left)
+    if (!model_.died_ and button == ge211::Mouse_button::right and
+    !model_.win_)
     {
 
         // if there is already a flag there, remove the flag
         if (model_.returnBoard().getPset("flags_")[boardpos])
         {
+            std::cout << "check";
             model_.returnBoard().removePset(boardpos, "flags_");
         }
 
         // else, add the hovered position to the flags_ pset in board.
         else
         {
+            std::cout << "check";
             model_.returnBoard().addPset(boardpos, "flags_");
-
         }
     }
 }

@@ -98,7 +98,7 @@ void View::draw(Sprite_set& set, ge211::Posn<int> mouse_pos)
             std::string c = std::to_string(counter);
 
             // set the number of bombs to text sprite
-            cout << c;
+            // cout << c;
             currCount.color(red) << c;
 
             // reconfigure the count to the updated counter
