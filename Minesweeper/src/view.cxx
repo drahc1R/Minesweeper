@@ -11,7 +11,7 @@ static int const grid_size = 35;
 // from 0 to 255.
 
 // create colors for sprites
-static Color const flagColor = Color::medium_blue();
+static Color const flagColor = Color::medium_red();
 static Color const bombColor = Color::black();
 static Color const gray {100, 100, 100};
 static Color const unknown {200, 200, 200};
@@ -83,9 +83,13 @@ void View::draw(Sprite_set& set, ge211::Posn<int> mouse_pos)
 
         // if the current position has been flagged, render a flag
         if (board.getPset("flags_")[bpos]) {
-            cout << "sup";
-            set.add_sprite(flag_, tilePos, 3);
+            cout << "position has been flagged";
+            set.add_sprite(flag_, tilePos, 1);
         }
+        // else
+        // {
+        //     set.add_sprite(un, tilePos, 1);
+        // }
 
         // render and display the number of adjacent bombs to the position
         if (board.adjacent_.count(bpos) == 1)
@@ -101,7 +105,6 @@ void View::draw(Sprite_set& set, ge211::Posn<int> mouse_pos)
                 // set the number of bombs to text sprite
                 // cout << c;
                 currCount.color(red) << c;
-                cout << bpos.x << " " << bpos.y;
                 count[bpos.x][bpos.y].reconfigure(currCount);
                 // reconfigure the count to the updated counter
                 // newC.reconfigure(currCount);

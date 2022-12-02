@@ -50,18 +50,20 @@ Controller::on_mouse_down(ge211::Mouse_button button, View::Position spos)
     if (!model_.died_ and button == ge211::Mouse_button::right and
     !model_.win_)
     {
-
+        cout << "left mouse ";
+        cout << model_.returnBoard().getPset("flags_");
+        cout << model_.returnBoard().getPset("flags_")[boardpos];
         // if there is already a flag there, remove the flag
-        if (model_.returnBoard().getPset("flags_")[boardpos])
+        if (model_.returnBoard().getPset("flags_")[boardpos] == 1)
         {
-            std::cout << "check";
+            std::cout << "removing flag from pset";
             model_.returnBoard().removePset(boardpos, "flags_");
         }
 
         // else, add the hovered position to the flags_ pset in board.
         else
         {
-            std::cout << "check";
+            std::cout << "add flag to pset";
             model_.returnBoard().addPset(boardpos, "flags_");
         }
     }
