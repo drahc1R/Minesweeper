@@ -1,6 +1,5 @@
 #include "view.hxx"
 
-
 // Convenient type aliases:
 using Color = ge211::Color;
 using Sprite_set = ge211::Sprite_set;
@@ -11,22 +10,19 @@ static int const grid_size = 35;
 // Colors are red-green-blue(-alpha), each component
 // from 0 to 255.
 
-//create colors for sprites
-
-static Color const flagColor = Color::medium_red();
+// create colors for sprites
+static Color const flagColor = Color::medium_blue();
 static Color const bombColor = Color::black();
 static Color const gray {100, 100, 100};
 static Color const unknown {200, 200, 200};
 static Color const seenColor = gray;
 static Color const unknownColor = unknown;
+static Color const red = {255, 0, 0};
 
-//make a size for each board unit.
+// make a size for each board unit.
 static ge211::Dims<int> bdim {33,33};
 
-//z vals: 0 is standard tile, 1 = winning tile, 2 = player piece, 3+ to
-// replace 'eaten' pieces
-
-//edited with new objects.
+// edited with new objects.
 View::View(Model& model)
         : model_(model),
           seen_(bdim, seenColor),
@@ -35,38 +31,83 @@ View::View(Model& model)
           bomb_(15, bombColor),
           sans18("sans.ttf", 18),
           count()
+          // is this only one count or can this be used for many
+          // positions?
+
         // You may want to add sprite initialization here
 {}
 
+// 1. draw the board
+// 2. draw all unknown positions as unknown sprites
+// 3. draw all seen positions as their actual sprites
+// 4. check if they are bombs, and the number of adjacent bombs
+// 5. draw all flags
 void View::draw(Sprite_set& set, ge211::Posn<int> mouse_pos)
 {
-    // draw the board
-    // draw all unknowns as unknown sprites
-    // draw all seens as their actual (check for bomb and adjacent) sprites
-    // with seen sprite as basis
-    // draw all flags regardless of anything
-
-
-    //need to loop through every position in board to draw board
+    // loop through every position in the board
     for (Position bpos : model_.board()) {
-        //get screen position from that board position
-        Position screenPos = board_to_screen(bpos);
-        //adjust tile position by moving it right and down to center
-        Position tilePos = screenPos + Dimensions {2,2};
-        //get piece position setting it to the tilePos and then moving it right
-        // and down to center
-        Position piecePos = tilePos + Dimensions {1,2};//Dimensions
 
-        if (model_.board_.getPset["seen_"]) {
-            set.add_sprite(gainTile_, tilePos, 0);
-        } else {
-            set.add_sprite(tile_, tilePos, 0);
+        // get screen position from that board position
+        Position screenPos = board_to_screen(bpos);
+
+        // adjust tile position by moving it right and down to center
+        Position tilePos = screenPos + Dimensions {2, 2};
+
+        // get piece position setting it to the tilePos and then moving it right
+        // and down to center
+        Position piecePos = tilePos + Dimensions {1, 2}; //Dimensions
+
+        // return the board
+        Board board = model_.returnBoard();
+
+        // get the position set of seen_ tiles from board_
+        Position_set seen = board.getPset("seen_");
+
+        // if the current position is seen, render it
+        if (board.getPset("seen_")[bpos]) {
+            set.add_sprite(seen_, tilePos, 0);
+
+            // render all the bombs if there is a bomb in that position, and
+            // that position is seen
+            if (board.getPset("bombs_")[bpos])
+            {
+                set.add_sprite(bomb_, tilePos, 1);
+            }
         }
 
-        add_player_sprite_(set, model_[bpos], piecePos, 1);
+        // render unknown if the position is not seen (unknown)
+        else {
+            set.add_sprite(unknown_, tilePos, 0);
+        }
+
+        // if the current position has been flagged, render a flag
+        if (board.getPset("flags_")[bpos]) {
+            cout << "sup";
+            set.add_sprite(flag_, tilePos, 3);
+        }
+
+        // render and display the number of adjacent bombs to the position
+        if (board.adjacent_.count(bpos) == 1)
+        {
+
+            // create a text_sprite
+            ge211::Text_sprite::Builder currCount(sans18);
+
+            // get the number of adjacent bombs
+            int counter = board.adjacent_[bpos];
+            std::string c = std::to_string(counter);
+
+            // set the number of bombs to text sprite
+            cout << c;
+            currCount.color(red) << c;
+
+            // reconfigure the count to the updated counter
+            count.reconfigure(currCount);
+            set.add_sprite(count, tilePos, 2);
+        }
     }
-    add_player_sprite_(set, model_.turn(), mouse_pos, 2);
 }
+
 View::Dimensions
 View::initial_window_dimensions() const
 {
@@ -89,7 +130,7 @@ View::board_to_screen(Model::Position pos) const
     return {grid_size * pos.x, grid_size * pos.y};
 }
 
-//takes pixel position and converts to board position
+// takes pixel position and converts to board position
 Model::Position
 View::screen_to_board(View::Position pos) const
 {
@@ -97,10 +138,7 @@ View::screen_to_board(View::Position pos) const
 }
 
 
-/// NO need
-//arms length collab with evan chen. High level discussion of how to check
-// whether a move is real or not and if there is a "gains" set that we can
-// return it
+
 // Position_set const&
 // View::gains_(View::Position mouse_pos) const
 // {
@@ -124,35 +162,35 @@ View::screen_to_board(View::Position pos) const
 // Arms-length collaboration with Evan Chen on how to add each
 // sprite to the sprite set. (What to check for first and why, and why
 // checking "isgameover" late causes the bug of winning pieces disappearing.
-void
-View::add_type_sprite_(
-        Sprite_set& set,
-        Type type,
-        Position pos,
-        int z) const
-{
-    {
-        if (type == Type::)
-        {
-            return;
-        }
-        //case for if the game is over, need to replace all loser pieces with
-        // the loser sprite
-        if (model_.is_game_over() and player != model_.winner())
-        {
-            set.add_sprite(loserSprite_, pos, z);
-        }
-        //for every position need to check if its light or dark to add to
-        // sprite set
-        else if (player == Player::light)
-        {
-            set.add_sprite(lightPiece_, pos, z);
-        }
-        else if (player == Player::dark)
-        {
-            set.add_sprite(darkPiece_, pos, z);
-        }
-
-
-    }
-}
+// void
+// View::add_type_sprite_(
+//         Sprite_set& set,
+//         Type type,
+//         Position pos,
+//         int z) const
+// {
+//     {
+//         if (type == Type::)
+//         {
+//             return;
+//         }
+//         //case for if the game is over, need to replace all loser pieces with
+//         // the loser sprite
+//         if (model_.is_game_over() and player != model_.winner())
+//         {
+//             set.add_sprite(loserSprite_, pos, z);
+//         }
+//         //for every position need to check if its light or dark to add to
+//         // sprite set
+//         else if (player == Player::light)
+//         {
+//             set.add_sprite(lightPiece_, pos, z);
+//         }
+//         else if (player == Player::dark)
+//         {
+//             set.add_sprite(darkPiece_, pos, z);
+//         }
+//
+//
+//     }
+// }

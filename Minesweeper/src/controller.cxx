@@ -10,7 +10,6 @@ Controller::Controller(int width, int height)
           mouse_pos{0,0}
 { }
 
-
 void
 Controller::draw(ge211::Sprite_set& sprites)
 {
@@ -22,22 +21,47 @@ Controller::draw(ge211::Sprite_set& sprites)
 void
 Controller::on_mouse_move(ge211::Posn<int> position)
 {
-    //update the position of the mouse
+    // update the position of the mouse
     mouse_pos = position;
 }
 
+// when player clicks, get the mouse position to the position clicked on the
+// board. Find the corresponding tile, and play_move_ there.
 void
 Controller::on_mouse_down(ge211::Mouse_button button, View::Position spos)
 {
-    //get the board position and create a move var
+    // get the board position from mouse position
     Model::Position boardpos = view_.screen_to_board(spos);
-    Move const *move;
-    //play the move if game is not over, check for right button, and get that
-    // move object from model to play it
-    if (!model_.is_game_over() and button == ge211::Mouse_button::left and
-    (move = model_.find_move(boardpos)))
+
+    // play the move when:
+        // 1. the player hasn't died
+        // 2. the player left clicks
+        // 3. the status of the tile is not known
+    if (!model_.died_
+        and button == ge211::Mouse_button::left)
+        // and (view_.model_.returnBoard().getPset("unknown_")[boardpos]))
     {
-        model_.play_move(move->first);
+        std::cout << "check";
+        model_.play_move(boardpos);
+    }
+
+    // if user right clicks and player not died, check if there is a flag in
+    // that position
+    if (!model_.died_ and button == ge211::Mouse_button::left)
+    {
+
+        // if there is already a flag there, remove the flag
+        if (model_.returnBoard().getPset("flags_")[boardpos])
+        {
+            model_.returnBoard().removePset(boardpos, "flags_");
+        }
+
+        // else, add the hovered position to the flags_ pset in board.
+        else
+        {
+            model_.returnBoard().addPset(boardpos, "flags_");
+
+        }
     }
 }
 
@@ -52,4 +76,3 @@ Controller::initial_window_title() const
 {
     return view_.initial_window_title();
 }
-

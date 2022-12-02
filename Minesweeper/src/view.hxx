@@ -52,13 +52,12 @@ private:
     ge211::Rectangle_sprite unknown_;
     ge211::Circle_sprite flag_;
     ge211::Circle_sprite bomb_;
-    ge211::Font sans18{"sans.ttf", 18};
+    ge211::Font sans18;
     ge211::Text_sprite count;
 
     ///functions
 
     // function for working out
 
-    void
-    add_type_sprite_(ge211::Sprite_set&, Type, Position, int z) const;
+
 };

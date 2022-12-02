@@ -36,6 +36,8 @@ public:
     // Defined and documented below.
     class reference;
 
+    unordered_map<Position, int> adjacent_;
+
 
 
 private:
@@ -47,7 +49,6 @@ private:
     // /// should update seen every 'turn'?
     Position_set bombs_;
     /// should update seen every 'turn'?
-    unordered_map<Position, int> adjacent_;
     Position_set seen_;
     Position_set safe_;
     Position_set flags_;
@@ -69,7 +70,7 @@ public:
 
     ///Function to return pset. Will return an empty pset if there is no pset
     /// of that string
-    Position_set getPset(std::string set);
+    Position_set getPset(std::string set) const;
 
     ///Function that returns bool if bomb present in that position
     bool isBomb(Position pos) const;
@@ -77,9 +78,14 @@ public:
     ///Function that returns bool if position is seen or unknown
     bool isSeen(Position pos) const;
 
+    ///Function that adds adjacent[pos] = #ofbombs
     void addAdjacent(Position pos, int i);
 
+    ///Function that adds bombs positions to seen_
+    ///Needed for rendering all bombs when dead
     void addBombsToSeen();
+
+
 
     /// Constructs a board with the given dimensions.
     ///

@@ -1,7 +1,4 @@
-/*************************************************/
-/*** DO NOT CHANGE THE PUBLIC API IN THIS FILE ***/
-/*************************************************/
-//
+
 // You may add private members if you like, or even remove
 // the private helper functions, but you mustn't change the
 // existing public members, nor add new ones. If you do, your
@@ -25,7 +22,8 @@ public:
     /*** DON'T CHANGE ANYTHING IN THE PUBLIC SECTION ***/
     /***************************************************/
 
-
+    bool win_;
+    bool died_;
     /// Model dimensions will use `int` coordinates, as board dimensions do.
     using Dimensions = Board::Dimensions;
 
@@ -67,6 +65,9 @@ public:
     /// should probably also check if the position has a bomb and end the
     /// game by revealing all bombs
     void play_move(Position pos);
+
+    ///Returns the board
+    Board returnBoard();
 
     /// No need
     // /// Returns the current turn, or `Player::neither` if the game is
@@ -124,8 +125,7 @@ private:
     // PRIVATE MEMBER VARIABLES
     // (Don't change these!)
     //
-    bool win_;
-    bool died_;
+
     Board board_;
 
     Move_map next_moves_;

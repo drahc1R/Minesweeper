@@ -6,19 +6,17 @@ using Position = ge211::Posn<int>;
 
 Model::Model(int size)
         : Model(size, size)
-
-{
-}
+{}
 
 Model::Model(int width, int height)
         : board_({width, height})
 {
-    // TODO: initialize `next_moves_` to `turn_`'s available moves
-    // sets next_moves_ keys to all available positions and gains as their
-    // values
-    /// Play start move
+    // sets up all the bombs, and initialises the game by playing a move at a
+    // safe position. Therefore, the first uncovered tile isn't a bomb. When
+    // the game starts, the player hasn't won yet, and hasn't died yet.
     win_ = false;
     died_ = false;
+    setup_bombs_();
     play_move(start_pos_());
 }
 
@@ -36,8 +34,9 @@ Model::operator[](Position pos) const
 
 /// MINESWEEPER FUNCTIONS START HERE
 
-/// Goes one step into direction 'dir' to check if there is a bomb.
-/// Returns a position_set. Empty if no bomb present in that direction.
+// Goes one step into direction 'dir' to check if there is a bomb.
+// Returns a position_set of bombs. The position set would be empty if there
+// are no bombs in that direction.
 Position_set
 Model::dir_bombs_(Position start, Dimensions dir) const
 {
@@ -47,15 +46,17 @@ Model::dir_bombs_(Position start, Dimensions dir) const
         // check for a bomb in direction of 'dir'
         start += dir;
 
-        // if going off the board or the adjacent tile is safe, return empty set
+        // if the tile in the 'dir' direction is off the board, or if it is a
+        // safe position, return an empty position set, meaning there is no
+        // bomb in that direction.
         if (!board_.good_position(start) or
             board_[start] == Type::safe)
         {
             return res;
         }
 
-        // if that direction is still within bounds and there's a bomb. add to
-        // position set
+        // if the tile in the 'dir' direction has a bomb, add the position of
+        // that bomb to the position set.
         if (board_.good_position(start) and
         board_[start] == Type::bomb)
         {
@@ -65,10 +66,10 @@ Model::dir_bombs_(Position start, Dimensions dir) const
         return res;
 }
 
-/// Returns a union set of positions using dir_bombs_ as a helper
-/// function for checking in each direction. Returns a set of positions
-/// that contains all nearby bombs for that one position. We can iterate
-/// thru this set to count bombs
+// Returns a union-ed set of positions using dir_bombs_ as a helper
+// function for checking in each direction. Returns a position set of
+// all adjacent bombs for that one position. We can iterate through this
+// position set to count the total bombs adjacent to a tile.
 Position_set
 Model::all_adjacent_bombs_(Position pos) const
 {
@@ -78,11 +79,11 @@ Model::all_adjacent_bombs_(Position pos) const
     // iterate through all eight directions
     for (auto d: board_.all_directions())
     {
-        // call helper function to check if that direction has a bomb
+        // call dir_bombs helper function to check if that direction has a bomb
         Position_set curr = dir_bombs_(pos, d);
 
         // if the resulting position set isn't empty (meaning there's a
-        // bomb), add to final position set
+        // bomb), add the position of the bomb to the position set
         if (!curr.empty())
         {
             for (Position p: curr)
@@ -96,14 +97,12 @@ Model::all_adjacent_bombs_(Position pos) const
     return pset;
 }
 
-/// Iterates through each position in all_adjacent_bombs's returned position
-/// set. Returns an integer. This integer will be used to mark each
-/// position with adjacent bombs
-//  have to iterate through this position set to make the adjacent tiles for
-/// the solution board
+// Takes the position set of all bombs from all_adjacent_bombs. This counts
+// the number of bombs adjacent to a tile.
 int
 Model::count_bombs_(Position pos) const
 {
+
     int count = 0;
     Position_set pset = all_adjacent_bombs_(pos);
     for (Position p : pset)
@@ -121,7 +120,7 @@ Model::no_bombs_() const
     Position_set pset;
     for (Position p : board_.all_positions())
     {
-        if (count_bombs_(p) == 0)
+        if (count_bombs_(p) == 0 and !board_.getPset("bombs_")[p])
         {
             pset[p] = true;
         }
@@ -129,26 +128,18 @@ Model::no_bombs_() const
     return pset;
 }
 
-/// function returns a randomised position_set of bomb locations.
-//Have to iterate thru this pset to make the const solution board
+// This returns a position set of randomised bomb locations.
 Position_set
 Model::bomb_positions_() const
 {
-    //use random_source() to generate random x and y coords
-    //generated random positions must be within good position and not in pset
-    // yet
-    //while true until global number of positions in set reaches desired
-    // number of bombs
-    // return pset.
-
-    //create a pset
+    // initialise a position set
     Position_set res;
 
-    //creating randint object (has to parametrized to difficulty, but let's
-    // not do that)
-    Random_source<int> cord(0, 8);
+    // create a random integer object between 0 and 7
+    Random_source<int> cord(0, 7);
 
-    //counter to know when to stop adding bombs
+    // initialise a counter to know when to stop adding bombs. Once there is
+    // this number of bombs on the board, stop adding bombs.
     int count = 0;
 
     while (true)
@@ -157,14 +148,15 @@ Model::bomb_positions_() const
         {
             return res;
         }
-        //get randints
+        // get the random integers
         int xcord = cord.next();
         int ycord = cord.next();
 
-        //creating a position with those randints
+        // create a position with those random integers
         Position p(xcord, ycord);
 
-        //check if that position is already in the set
+        // if a random position generated is already in the position set (i.e.
+        // it already has a bomb there), redo it and generate another position.
         if (!res[p])
         {
             res[p] = true;
@@ -173,8 +165,8 @@ Model::bomb_positions_() const
     }
 }
 
-/// iterate through the returned set of bomb_positions to set
-// Bombs[{Position}] = true;
+// the function above returned a position set of where all the bombs should be.
+// This function marks those positions as bombs.
 void
 Model::setup_bombs_()
 {
@@ -183,30 +175,43 @@ Model::setup_bombs_()
 
     for (Position pos : bset)
     {
-        // set this as a public variable in board so that i could update bomb
-        // locations here...
+        // set this as a public variable in board so that we can update bomb
+        // locations here
         board_.addPset(pos, "bombs_");
     }
 }
 
-/// gets a random position from tiles with no bombs
-/// returns this position to start game safely.
+// this function returns an initial position to start the game. This tile is
+// guaranteed to be safe, so it's ensured that the first uncovered tile in the
+// game is not a bomb.
 Position
 Model::start_pos_() const
 {
+    // calls our no_bombs_ helper function. This gives us a tile that has no
+    // bombs to it at all.
     Position_set safe = no_bombs_();
+
+    // counter of total safe positions
     int totalSafePos = 0;
 
     // creating a position var that will be returned if the random generator
     // doesn't work
     Posn<int> first(0,0);
+
+    // counts how many safe positions there are
     for (Position p: safe) {
         totalSafePos++;
-        // this needs to be returned
+
+        // edge case: if there are no safe positions, return the first position
+        // this should never run, because there is always a safe position.
         first = p;
     }
+
+    // random object that generates a number between 0 and the number of safe
+    // positions.
     Random_source<int> cord(0, totalSafePos);
 
+    // returning
     int curr = 0;
     int rand = cord.next();
     for (Position p : safe)
@@ -229,38 +234,35 @@ Model::start_pos_() const
 /// view
 
 
-/// play the move by adding to seen and removing from unknown set. if its a
-/// bomb, die and end game. when uncovering the next move. check how many
-/// bombs are nearby for that position.
-/// need to store this number to display it on that position somehow
+// play the move by adding to seen and removing from unknown set. if it's a
+// bomb, die and end game. when uncovering the next move. check how many
+// bombs are nearby for that position.
+// need to store this number to display it on that position somehow
 void
 Model::play_move(Position pos)
 {
-    // add position to position set of seen tiles
+    // add the played position to the position set of seen tiles
     board_.addPset(pos, "seen_");
 
-    // remove position from position set of unknown tiles
+    // remove the played position from position set of unknown tiles
     board_.removePset(pos, "unknown");
 
-    /// if bomb. set die to true. this should trigger end of game
+    // if the played position is a bomb, the player dies. Trigger the end of
+    // the game
     if (board_.isBomb(pos))
     {
         died_ = true;
         set_game_over_();
     }
-    ///just in case there are no more unknown safe positions
+
+    // when there are no more unknown safe positions, the player has won
     else if ((board_.numTypes(Type::unknown) - 10) == 0)
     {
         win_ = true;
     }
+
     else
     {
-        /// add to seen
-        board_.addPset(pos, "seen_");
-
-        /// remove from unknown
-        board_.removePset(pos,"unknown_");
-
         // count the number of bombs for the uncovered position
         int numBombs = count_bombs_(pos);
 
@@ -275,11 +277,7 @@ Model::play_move(Position pos)
     }
 }
 
-
-/// need to fix the board and tileType classes to fit our needs better.
-
-
-// Sets game over if selected position is a bomb tile
+// this function is called when the game is over
 void
 Model::set_game_over_()
 {
@@ -287,23 +285,14 @@ Model::set_game_over_()
     board_.addBombsToSeen();
 }
 
+Board
+Model::returnBoard()
+{
+    return board_;
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// END OF MINESWEEPER FUNCTIONS
+// COMMENTED-OUT FUNCTIONS FROM REVERSI ARE STILL BELOW. SCROLL DOWN!
 
 
 
@@ -346,7 +335,6 @@ Model::set_game_over_()
 //         throw Client_logic_error("Model::play_move: no such move");
 //     }
 //
-//     // TODO: actually execute the move, advance the turn, refill
 //     // `next_moves_`, etc.
 //
 //     really_play_move_(*movep);
@@ -506,13 +494,15 @@ Model::set_game_over_()
 //     //advance turn either player can still play (HAVE AVAILABLE MOVES)
 //     //advance turn twice if next player cant play
 //
-//     //get the move and then use that to update board. set that position to turn
+//     //get the move and then use that to update board.
+//     set that position to turn
 //     board_.set_all(move.second, turn_);
 //     //check if next player can play
 //     bool check = advance_turn_();
 //     if (!check)
 //     {
-//         //if cant play, then advance turn one more time and check if he can play
+//         //if cant play, then advance turn one more time
+//         and check if he can play
 //         check = advance_turn_();
 //         if (!check)
 //         {

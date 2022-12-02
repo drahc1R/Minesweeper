@@ -77,7 +77,7 @@ Board::removePset(Position pos, std::string pset)
 }
 
 Position_set
-Board::getPset(std::string set)
+Board::getPset(std::string set) const
 {
     if (set == "bombs_")
     {
@@ -140,7 +140,7 @@ Board::addBombsToSeen()
 void
 Board::addAdjacent(Position pos, int i)
 {
-    adjacent_[pos] = i;
+    adjacent_.insert({pos, i});
 }
 
 bool
