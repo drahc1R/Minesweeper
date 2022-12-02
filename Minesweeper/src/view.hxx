@@ -53,7 +53,7 @@ private:
     ge211::Circle_sprite flag_;
     ge211::Circle_sprite bomb_;
     ge211::Font sans18;
-    ge211::Text_sprite count;
+    ge211::Text_sprite count[8][8];
 
     ///functions
 

@@ -37,7 +37,8 @@ protected:
     //check mouse hover position
     void on_mouse_move(ge211::Posn<int>) override;
     //check if user clicked right button and play move
-    void on_mouse_down(ge211::Mouse_button button, View::Position spos);
+    void on_mouse_down(ge211::Mouse_button button, View::Position spos) override;
+
 
 
     void draw(ge211::Sprite_set&) override;

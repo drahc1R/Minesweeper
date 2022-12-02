@@ -55,7 +55,8 @@ void View::draw(Sprite_set& set, ge211::Posn<int> mouse_pos)
 
         // get piece position setting it to the tilePos and then moving it right
         // and down to center
-        Position piecePos = tilePos + Dimensions {1, 2}; //Dimensions
+        Position bombPos = tilePos + Dimensions {1, 2}; //Dimensions
+        Position countPos = tilePos + Dimensions {11, 0}; //Dimensions
 
         // return the board
         Board board = model_.returnBoard();
@@ -71,7 +72,7 @@ void View::draw(Sprite_set& set, ge211::Posn<int> mouse_pos)
             // that position is seen
             if (board.getPset("bombs_")[bpos])
             {
-                set.add_sprite(bomb_, tilePos, 1);
+                set.add_sprite(bomb_, bombPos, 1);
             }
         }
 
@@ -89,21 +90,23 @@ void View::draw(Sprite_set& set, ge211::Posn<int> mouse_pos)
         // render and display the number of adjacent bombs to the position
         if (board.adjacent_.count(bpos) == 1)
         {
+            if (board.adjacent_.at(bpos) > 0) {
+                // create a text_sprite
+                ge211::Text_sprite::Builder currCount(sans18);
 
-            // create a text_sprite
-            ge211::Text_sprite::Builder currCount(sans18);
+                // get the number of adjacent bombs
+                int counter = board.adjacent_[bpos];
+                std::string c = std::to_string(counter);
 
-            // get the number of adjacent bombs
-            int counter = board.adjacent_[bpos];
-            std::string c = std::to_string(counter);
-
-            // set the number of bombs to text sprite
-            // cout << c;
-            currCount.color(red) << c;
-
-            // reconfigure the count to the updated counter
-            count.reconfigure(currCount);
-            set.add_sprite(count, tilePos, 2);
+                // set the number of bombs to text sprite
+                // cout << c;
+                currCount.color(red) << c;
+                cout << bpos.x << " " << bpos.y;
+                count[bpos.x][bpos.y].reconfigure(currCount);
+                // reconfigure the count to the updated counter
+                // newC.reconfigure(currCount);
+                set.add_sprite(count[bpos.x][bpos.y], countPos, 2);
+            }
         }
     }
 }
