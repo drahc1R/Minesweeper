@@ -4,6 +4,7 @@
 
 #include "board.hxx"
 #include <algorithm>
+#include "position_set.hxx"
 
 using namespace ge211;
 

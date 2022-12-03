@@ -7,7 +7,6 @@ include(.cs211/cmake/CMakeLists.txt)
 set(MODEL_SRC
         src/tileType.cxx
         src/position_set.cxx
-        src/move.cxx
         src/board.cxx
         src/model.cxx)
 
@@ -30,10 +29,6 @@ target_link_libraries(model_test ge211)
 # Adds a test program named `helper_test` for testing the helper
 # classes.
 add_test_program(helper_test
-        test/player_test.cxx
-        test/position_set_test.cxx
-        test/move_test.cxx
-        test/board_test.cxx
         ${MODEL_SRC})
 target_link_libraries(helper_test ge211)
 

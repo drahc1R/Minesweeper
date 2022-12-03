@@ -5,7 +5,7 @@
 #pragma once
 
 #include "tileType.hxx"
-#include "move.hxx"
+#include "position_set.hxx"
 
 #include <ge211.hxx>
 

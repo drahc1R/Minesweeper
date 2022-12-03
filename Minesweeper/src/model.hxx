@@ -128,7 +128,6 @@ private:
 
     Board board_;
 
-    Move_map next_moves_;
     // INVARIANT:
     //  - `next_moves_` is always current for the state of the game.
 
