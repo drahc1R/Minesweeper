@@ -61,9 +61,6 @@ void View::draw(Sprite_set& set, ge211::Posn<int> mouse_pos)
         // return the board
         Board board = model_.returnBoard();
 
-        // get the position set of seen_ tiles from board_
-        Position_set seen = board.getPset("seen_");
-
         // if the current position is seen, render it
         if (board.getPset("seen_")[bpos]) {
             set.add_sprite(seen_, tilePos, 0);
